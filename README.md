@@ -3,13 +3,12 @@
 
 ## Introduction
 
-A starting point for Neovim that is:
+My personal Neovim configuration, following the [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) starting configs and some [lunarvim](https://github.com/nvim-lua/kickstart.nvim) patterns, keymaps and configs.
 
-* Small
-* Single-file
-* Completely Documented
-
-**NOT** a Neovim distribution, but instead a starting point for your configuration.
+* Simple and easy
+* With folke plugins
+* Tokyonight because it's the best
+* Most settings for typescript development
 
 ## Installation
 
