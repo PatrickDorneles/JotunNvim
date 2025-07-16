@@ -1,4 +1,5 @@
-# kickstart.nvim
+# Jotun Nvim  
+### My personal config based on kickstart and lunarvim
 
 ## Introduction
 
