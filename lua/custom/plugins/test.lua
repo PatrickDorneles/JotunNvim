@@ -18,7 +18,7 @@ return {
       local is_vitest = check_configfile_exists 'vitest.config.ts'
 
       local jest_adapter = require 'neotest-jest' {
-        jestCommand = 'npm run test --',
+        jestCommand = 'npm run test -- --detectOpenHandles',
         jestConfigFile = 'custom.jest.config.ts',
         env = { CI = true },
         cwd = function(path)

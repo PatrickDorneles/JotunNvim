@@ -924,4 +924,18 @@ if vim.g.neovide then
     -- setup lsp
     lspconfig.gdscript.setup {}
   end
+
+  local copilot = require 'copilot'
+
+  copilot.setup {
+    server_opts_overrides = {
+      trace = 'verbose',
+      settings = {
+        advanced = {
+          listCount = 10, -- #completions for panel
+          inlineSuggestCount = 3, -- #completions for getCompletions
+        },
+      },
+    },
+  }
 end

@@ -19,6 +19,7 @@ return {
       -- add any opts here
       -- for example
       provider = 'claude',
+      auto_suggestions_provider = false,
       providers = {
         claude = {
           endpoint = 'https://api.anthropic.com',
@@ -51,7 +52,6 @@ return {
       'stevearc/dressing.nvim', -- for input provider dressing
       'folke/snacks.nvim', -- for input provider snacks
       'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
-      'zbirenbaum/copilot.lua', -- for providers='copilot'
       {
         -- support for image pasting
         'HakonHarnes/img-clip.nvim',
@@ -76,6 +76,25 @@ return {
           file_types = { 'markdown', 'Avante' },
         },
         ft = { 'markdown', 'Avante' },
+      },
+    },
+  },
+  {
+    'zbirenbaum/copilot.lua',
+    event = 'InsertEnter',
+    opts = {
+      filetypes = {
+        gdscript = false,
+      },
+      panel = {
+        enabled = false,
+      },
+      suggestion = {
+        auto_trigger = true,
+        hide_during_completion = false,
+        keymap = {
+          accept = '<Tab>',
+        },
       },
     },
   },
