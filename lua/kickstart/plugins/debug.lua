@@ -16,7 +16,6 @@ return {
 
     -- Required dependency for nvim-dap-ui
     'nvim-neotest/nvim-nio',
-
     -- Installs the debug adapters for you
     'mason-org/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
@@ -81,6 +80,22 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
+    dap.adapters.godot = {
+      type = 'server',
+      host = '127.0.0.1',
+      port = 6006,
+    }
+
+    dap.configurations.gdscript = {
+      {
+        type = 'godot',
+        request = 'launch',
+        name = 'Launch scene',
+        project = '${workspaceFolder}',
+        launch_scene = true,
+      },
+    }
+
     require('mason-nvim-dap').setup {
       -- Makes a best effort to setup the various debuggers with
       -- reasonable debug configurations
@@ -95,6 +110,7 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'js-debug-adapter',
       },
     }
 
@@ -142,6 +158,21 @@ return {
         -- On Windows delve must be run attached or it crashes.
         -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
         detached = vim.fn.has 'win32' == 0,
+      },
+    }
+    dap.configurations.typescript = {
+      {
+        type = 'node',
+        request = 'launch',
+        name = 'Launch current file (tsx)',
+        program = '${file}',
+        runtimeExecutable = 'tsx',
+        console = 'integratedTerminal',
+        cwd = '${workspaceFolder}',
+        skipFiles = {
+          '<node_internals>/**',
+          '${workspaceFolder}/node_modules/**',
+        },
       },
     }
   end,

@@ -2,6 +2,23 @@ return {
   {
     'numToStr/Comment.nvim',
     opts = {},
+    config = function()
+      require('Comment').setup()
+
+      local api = require 'Comment.api'
+
+      -- Toggle selection (linewise)
+      vim.keymap.set('x', '<leader>\\', function()
+        vim.api.nvim_feedkeys(esc, 'nx', false)
+        api.toggle.linewise(vim.fn.visualmode())
+      end)
+
+      -- Toggle selection (blockwise)
+      vim.keymap.set('x', '<leader>|', function()
+        vim.api.nvim_feedkeys(esc, 'nx', false)
+        api.toggle.blockwise(vim.fn.visualmode())
+      end)
+    end,
   },
   {
     'NvChad/nvim-colorizer.lua',
@@ -13,23 +30,46 @@ return {
     end,
   },
   {
-    'kdheepak/lazygit.nvim',
-    lazy = true,
+    'christoomey/vim-tmux-navigator',
     cmd = {
-      'LazyGit',
-      'LazyGitConfig',
-      'LazyGitCurrentFile',
-      'LazyGitFilter',
-      'LazyGitFilterCurrentFile',
+      'TmuxNavigateLeft',
+      'TmuxNavigateDown',
+      'TmuxNavigateUp',
+      'TmuxNavigateRight',
+      'TmuxNavigatePrevious',
+      'TmuxNavigatorProcessList',
     },
-    --optional for floating window border decoration
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-    },
-    --setting the keybinding for LazyGit with 'keys' is recommended in
-    --order to load the plugin when the command is run for the first time
     keys = {
-      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open Lazy[G]it [G]UI' },
+      { '<c-h>', '<cmd><C-U>TmuxNavigateLeft<cr>' },
+      { '<c-j>', '<cmd><C-U>TmuxNavigateDown<cr>' },
+      { '<c-k>', '<cmd><C-U>TmuxNavigateUp<cr>' },
+      { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
+      { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
     },
+  },
+
+  {
+    'nacro90/numb.nvim',
+    event = 'BufRead',
+    config = function()
+      require('numb').setup {
+        show_numbers = true, -- Enable 'number' for the window while peeking
+        show_cursorline = true, -- Enable 'cursorline' for the window while peeking
+      }
+    end,
+  },
+  {
+    'f-person/git-blame.nvim',
+    event = 'BufRead',
+    config = function()
+      vim.cmd 'highlight default link gitblame SpecialComment'
+      vim.g.gitblame_enabled = 0
+    end,
+  },
+
+  {
+    'vyfor/cord.nvim',
+    build = ':Cord update',
+    -- opts = {}
   },
 }

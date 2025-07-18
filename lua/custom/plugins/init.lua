@@ -181,7 +181,7 @@ return {
           kinds = { 'comment', 'imports' }, ---@type lsp.FoldingRangeKind[]
         },
         foldKeymaps = {
-          setup = true, -- modifies `h` and `l`
+          setup = false, -- modifies `h` and `l`
           hOnlyOpensOnFirstColumn = false,
         },
       }
@@ -189,30 +189,5 @@ return {
       vim.opt.foldlevel = 99
       vim.opt.foldlevelstart = 99
     end,
-  },
-
-  {
-    'christoomey/vim-tmux-navigator',
-    cmd = {
-      'TmuxNavigateLeft',
-      'TmuxNavigateDown',
-      'TmuxNavigateUp',
-      'TmuxNavigateRight',
-      'TmuxNavigatePrevious',
-      'TmuxNavigatorProcessList',
-    },
-    keys = {
-      { '<c-h>', '<cmd><C-U>TmuxNavigateLeft<cr>' },
-      { '<c-j>', '<cmd><C-U>TmuxNavigateDown<cr>' },
-      { '<c-k>', '<cmd><C-U>TmuxNavigateUp<cr>' },
-      { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
-      { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
-    },
-  },
-
-  {
-    'Fildo7525/pretty_hover',
-    event = 'LspAttach',
-    opts = {},
   },
 }
