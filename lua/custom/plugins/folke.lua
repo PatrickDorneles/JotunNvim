@@ -120,7 +120,7 @@ return {
         function()
           Snacks.picker.notifications()
         end,
-        desc = 'Notification History',
+        desc = '[N]otification History',
       },
       -- find
       {
@@ -128,49 +128,49 @@ return {
         function()
           Snacks.picker.buffers()
         end,
-        desc = 'Buffers',
+        desc = '[F]ind [B]uffers',
       },
       {
         '<leader>fc',
         function()
           Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
         end,
-        desc = 'Find Config File',
+        desc = '[F]ind [C]onfig File',
       },
       {
         '<leader>ff',
         function()
           Snacks.picker.files()
         end,
-        desc = 'Find Files',
+        desc = '[F]ind [F]iles',
       },
       {
         '<leader>fG',
         function()
           Snacks.picker.git_files()
         end,
-        desc = 'Find Git Files',
+        desc = '[F]ind [G]it Files',
       },
       {
         '<leader>fg',
         function()
           Snacks.picker.grep()
         end,
-        desc = 'Grep',
+        desc = '[F]ind with [G]rep',
       },
       {
         '<leader>fp',
         function()
           Snacks.picker.projects()
         end,
-        desc = 'Projects',
+        desc = '[F]ind [P]rojects',
       },
       {
         '<leader>fr',
         function()
           Snacks.picker.recent()
         end,
-        desc = 'Recent',
+        desc = '[F]ind [R]ecent',
       },
       -- git
       {
@@ -178,56 +178,56 @@ return {
         function()
           Snacks.picker.git_branches()
         end,
-        desc = 'Git Branches',
+        desc = '[G]it [B]ranches',
       },
       {
         '<leader>gl',
         function()
           Snacks.picker.git_log()
         end,
-        desc = 'Git Log',
+        desc = '[G]it [L]og',
       },
       {
         '<leader>gL',
         function()
           Snacks.picker.git_log_line()
         end,
-        desc = 'Git Log Line',
+        desc = '[G]it [L]og Line',
       },
       {
         '<leader>gs',
         function()
           Snacks.picker.git_status()
         end,
-        desc = 'Git Status',
+        desc = '[G]it [S]tatus',
       },
       {
         '<leader>gS',
         function()
           Snacks.picker.git_stash()
         end,
-        desc = 'Git Stash',
+        desc = '[G]it [S]tash',
       },
       {
         '<leader>gd',
         function()
           Snacks.picker.git_diff()
         end,
-        desc = 'Git Diff (Hunks)',
+        desc = '[G]it [D]iff (Hunks)',
       },
       {
         '<leader>gf',
         function()
           Snacks.picker.git_log_file()
         end,
-        desc = 'Git Log File',
+        desc = '[G]it Log [F]ile',
       },
       {
         '<leader>gg',
         function()
           Snacks.lazygit.open()
         end,
-        desc = 'Open LazyGit',
+        desc = '[G]it [G]UI',
       },
       -- Grep
       {
@@ -235,28 +235,28 @@ return {
         function()
           Snacks.picker.lines()
         end,
-        desc = 'Buffer Lines',
+        desc = '[S]earch [B]uffer Lines',
       },
       {
         '<leader>sB',
         function()
           Snacks.picker.grep_buffers()
         end,
-        desc = 'Grep Open Buffers',
+        desc = '[S]earch Open [B]uffers',
       },
       {
         '<leader>sg',
         function()
           Snacks.picker.grep()
         end,
-        desc = 'Grep',
+        desc = '[S]earch [G]rep',
       },
       {
         '<leader>sw',
         function()
           Snacks.picker.grep_word()
         end,
-        desc = 'Visual selection or word',
+        desc = '[S]earch Visual Selection Or [W]ord',
         mode = { 'n', 'x' },
       },
       -- search
@@ -265,42 +265,35 @@ return {
         function()
           Snacks.picker.registers()
         end,
-        desc = 'Registers',
+        desc = '[S]earch Registers',
       },
       {
         '<leader>s/',
         function()
           Snacks.picker.search_history()
         end,
-        desc = 'Search History',
+        desc = '[S]earch History',
       },
       {
         '<leader>sa',
         function()
           Snacks.picker.autocmds()
         end,
-        desc = 'Autocmds',
-      },
-      {
-        '<leader>sb',
-        function()
-          Snacks.picker.lines()
-        end,
-        desc = 'Buffer Lines',
+        desc = '[S]earch [A]utocmds',
       },
       {
         '<leader>sc',
         function()
           Snacks.picker.command_history()
         end,
-        desc = 'Command History',
+        desc = '[S]earch [C]ommand History',
       },
       {
         '<leader>sC',
         function()
           Snacks.picker.commands()
         end,
-        desc = 'Commands',
+        desc = '[S]earch [C]ommands',
       },
       {
         '<leader>sd',
