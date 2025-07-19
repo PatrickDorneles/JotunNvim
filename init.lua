@@ -576,6 +576,9 @@ require('lazy').setup({
         cssls = {},
         emmet_ls = {},
         prettier = {},
+        clangd = {},
+        rust_analyzer = {},
+        pyright = {},
 
         --
 
