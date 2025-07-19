@@ -1,10 +1,5 @@
 require 'utils.bufferline'
 
--- You can add your own plugins here or in other files in this directory!
---  I promise not to create any merge conflicts in this directory :)
---
--- See the kickstart.nvim README for more information
-
 return {
   {
     'stevearc/oil.nvim',
@@ -158,33 +153,34 @@ return {
   {
     'chrisgrieser/nvim-origami',
     event = 'VeryLazy',
-    opts = {}, -- needed even when using default config
+    opts = {
+      useLspFoldsWithTreesitterFallback = true, -- required for `autoFold`
+      pauseFoldsOnSearch = true,
+      foldtext = {
+        enabled = true,
+        padding = 3,
+        lineCount = {
+          template = '%d lines', -- `%d` is replaced with the number of folded lines
+          hlgroup = 'Comment',
+        },
+        diagnosticsCount = true, -- uses hlgroups and icons from `vim.diagnostic.config().signs`
+        gitsignsCount = true, -- requires `gitsigns.nvim`
+      },
+      autoFold = {
+        enabled = true,
+        kinds = { 'comment', 'imports' }, ---@type lsp.FoldingRangeKind[]
+      },
+      foldKeymaps = {
+        setup = false, -- modifies `h` and `l`
+        hOnlyOpensOnFirstColumn = false,
+      },
+    }, -- needed even when using default config
 
     -- recommended: disable vim's auto-folding
     init = function()
-      -- default settings
-      require('origami').setup {
-        useLspFoldsWithTreesitterFallback = true, -- required for `autoFold`
-        pauseFoldsOnSearch = true,
-        foldtext = {
-          enabled = true,
-          padding = 3,
-          lineCount = {
-            template = '%d lines', -- `%d` is replaced with the number of folded lines
-            hlgroup = 'Comment',
-          },
-          diagnosticsCount = true, -- uses hlgroups and icons from `vim.diagnostic.config().signs`
-          gitsignsCount = true, -- requires `gitsigns.nvim`
-        },
-        autoFold = {
-          enabled = true,
-          kinds = { 'comment', 'imports' }, ---@type lsp.FoldingRangeKind[]
-        },
-        foldKeymaps = {
-          setup = false, -- modifies `h` and `l`
-          hOnlyOpensOnFirstColumn = false,
-        },
-      }
+      vim.keymap.set('n', 'l', function()
+        require('origami').l()
+      end)
 
       vim.opt.foldlevel = 99
       vim.opt.foldlevelstart = 99

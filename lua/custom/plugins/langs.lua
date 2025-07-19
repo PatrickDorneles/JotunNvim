@@ -1,6 +1,6 @@
 return {
   {
-    'S1M0N38/love2d.nvim',
+    'PatrickDorneles/love2d.nvim',
     event = 'VeryLazy',
     opts = {},
     keys = {
@@ -9,7 +9,7 @@ return {
       { '<leader>vs', '<cmd>LoveStop<cr>', ft = 'lua', desc = 'Stop LÖVE' },
     },
     config = function()
-      require('love2d').setup()
+      require('love2d').setup {}
     end,
   },
 }

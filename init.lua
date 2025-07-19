@@ -2,7 +2,6 @@ require 'utils.check-file'
 require 'utils.tmux-rename-tab'
 
 --[[
-
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -364,7 +363,7 @@ require('lazy').setup({
         { '<leader>f', group = '[F]ind' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]est' },
-        { '<leader>t', group = 'LÖ[V]E' },
+        { '<leader>v', group = 'LÖ[V]E' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
@@ -405,7 +404,6 @@ require('lazy').setup({
       { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by blink.cmp
-      'saghen/blink.cmp',
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -591,10 +589,12 @@ require('lazy').setup({
                 callSnippet = 'Replace',
               },
               workspace = {
+                -- Make the server aware of Neovim runtime files
                 library = {
                   '${3rd}/love2d/library',
                 },
-              }, -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+                checkThirdParty = false, -- Disable third-party checks
+              },
               -- diagnostics = { disable = { 'missing-fields' } },
             },
           },
@@ -757,14 +757,29 @@ require('lazy').setup({
       appearance = {
         -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
         -- Adjusts spacing to ensure icons are aligned
+
         nerd_font_variant = 'mono',
       },
 
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
+
         list = {},
-        documentation = { auto_show = true, auto_show_delay_ms = 0 },
+        documentation = { auto_show = true, auto_show_delay_ms = 500 },
+
+        menu = {
+          -- nvim-cmp style menu
+          draw = {
+            columns = {
+              { 'kind_icon', 'label', 'label_description', gap = 1 },
+              { 'kind' },
+              { 'source_name' },
+            },
+          },
+        },
+
+        ghost_text = { enabled = true },
       },
 
       sources = {

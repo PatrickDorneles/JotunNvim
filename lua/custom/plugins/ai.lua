@@ -1,3 +1,5 @@
+-- Description: AI plugins configuration for Neovim
+
 return {
   {
     'yetone/avante.nvim',
@@ -93,7 +95,9 @@ return {
         auto_trigger = true,
         hide_during_completion = false,
         keymap = {
-          accept = '<Tab>',
+          accept = '<c-y>',
+          next = '<c-n>',
+          prev = '<c-p>',
         },
       },
     },
