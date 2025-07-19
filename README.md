@@ -9,6 +9,10 @@ My personal Neovim configuration, following the [kickstart.nvim](https://github.
 * With folke plugins
 * Tokyonight because it's the best
 * Most settings for typescript development
+* A config for when using with Neovide and Godot
+* A fixed LÖVE integration on nvim v0.11+ from Fekinox
+* AI integrations
+* Keymaps from Kickstart, LazyVim, LunarVim and the voices of my head
 
 ## Installation
 
