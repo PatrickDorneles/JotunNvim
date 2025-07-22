@@ -88,7 +88,17 @@ return {
       explorer = { enabled = false },
       indent = { enabled = true },
       input = { enabled = true },
-      picker = { enabled = true },
+      picker = {
+        enabled = true,
+        win = {
+          input = {
+            keys = {
+              ['<a-j>'] = { 'list_down', mode = { 'i', 'n' } },
+              ['<a-k>'] = { 'list_up', mode = { 'i', 'n' } },
+            },
+          },
+        },
+      },
       notifier = { enabled = true },
       quickfile = { enabled = true },
       scope = { enabled = true },

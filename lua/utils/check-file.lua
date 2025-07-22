@@ -1,4 +1,5 @@
 --#region Utils
+
 function check_configfile_exists(filename)
   local cwd = vim.fn.getcwd()
   return vim.fn.filereadable(cwd .. '/' .. filename)

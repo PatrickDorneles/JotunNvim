@@ -368,13 +368,6 @@ require('lazy').setup({
               completion = {
                 callSnippet = 'Replace',
               },
-              workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = {
-                  '${3rd}/love2d/library',
-                },
-                checkThirdParty = false, -- Disable third-party checks
-              },
             },
           },
         },

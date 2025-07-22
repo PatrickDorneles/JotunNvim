@@ -18,6 +18,7 @@ return {
       local lint = require 'lint'
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
+        lua = { 'luacheck' },
         typescript = get_js_linters(),
         javascript = get_js_linters(),
         typescriptreact = get_js_linters(),
