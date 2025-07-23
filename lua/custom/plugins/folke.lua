@@ -64,23 +64,23 @@ return {
 
         sections = {
           { section = 'header' },
-          -- { section = 'keys', gap = 1, padding = 1 },
-          { icon = ' ', title = 'Recent Files', section = 'recent_files', padding = 1 },
+          { pane = 2, section = 'keys', gap = 1, padding = 1 },
+          { pane = 2, icon = ' ', title = 'Recent Files', section = 'recent_files', padding = 1 },
           -- { pane = 2, icon = ' ', title = 'Projects', section = 'projects', indent = 2, padding = 1 },
-          -- {
-          --   pane = 2,
-          --   icon = ' ',
-          --   title = 'Git Status',
-          --   section = 'terminal',
-          --   enabled = function()
-          --     return Snacks.git.get_root() ~= nil
-          --   end,
-          --   cmd = 'git status --short --branch --renames',
-          --   height = 5,
-          --   padding = 1,
-          --   ttl = 5 * 60,
-          --   indent = 3,
-          -- },
+          {
+            pane = 2,
+            icon = ' ',
+            title = 'Git Status',
+            section = 'terminal',
+            enabled = function()
+              return Snacks.git.get_root() ~= nil
+            end,
+            cmd = 'git status --short --branch --renames',
+            height = 5,
+            padding = 1,
+            ttl = 5 * 60,
+            indent = 3,
+          },
           --
           -- { section = 'startup' },
         },
@@ -471,24 +471,5 @@ return {
       --   If not available, we use `mini` as the fallback
       'rcarriga/nvim-notify',
     },
-  },
-  {
-    'folke/flash.nvim',
-    event = 'VeryLazy',
-    ---@type Flash.Config
-    opts = {},
-  -- stylua: ignore
-  keys = {
-    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-    { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-  },
-    config = function()
-      vim.keymap.set('n', 'f', function()
-        require('flash').jump()
-      end, { desc = 'Flash' })
-    end,
   },
 }

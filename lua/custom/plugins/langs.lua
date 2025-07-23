@@ -1,8 +1,11 @@
 return {
   {
-    'PatrickDorneles/love2d.nvim',
+    'S1M0N38/love2d.nvim',
+    branch = 'main',
     event = 'VeryLazy',
-    opts = {},
+    opts = {
+      restart_on_save = true, -- Restart LÖVE when the file is saved
+    },
     keys = {
       { '<leader>v', ft = 'lua', desc = 'LÖVE' },
       { '<leader>vv', '<cmd>LoveRun<cr>', ft = 'lua', desc = '[V] Run LÖVE' },

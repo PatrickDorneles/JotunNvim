@@ -1,7 +1,6 @@
 require 'utils.check-file'
 
 return {
-
   {
     'nvim-neotest/neotest',
     dependencies = {
@@ -13,7 +12,6 @@ return {
       'nvim-treesitter/nvim-treesitter',
       'nvim-neotest/neotest-jest',
       'marilari88/neotest-vitest',
-      'MisanthropicBit/neotest-busted',
     },
     config = function()
       local is_vitest = check_configfile_exists 'vitest.config.ts'
@@ -34,9 +32,6 @@ return {
       require('neotest').setup {
         adapters = {
           js_adapter,
-          require 'neotest-busted' {
-            busted_command = 'busted',
-          },
         },
       }
 

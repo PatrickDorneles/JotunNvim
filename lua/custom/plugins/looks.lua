@@ -55,4 +55,5 @@ return {
       vim.o.mousemoveevent = true
     end,
   },
+  { 'danilamihailov/beacon.nvim' },
 }
