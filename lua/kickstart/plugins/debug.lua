@@ -7,6 +7,7 @@
 -- kickstart.nvim and not kitchen-sink.nvim ;)
 
 return {
+
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
   -- NOTE: And you can specify dependencies as well
@@ -22,6 +23,7 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mxsdev/nvim-dap-vscode-js',
   },
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
@@ -54,14 +56,14 @@ return {
       desc = 'Debug: Step Out',
     },
     {
-      '<leader>b',
+      '<leader>db',
       function()
         require('dap').toggle_breakpoint()
       end,
       desc = 'Debug: Toggle Breakpoint',
     },
     {
-      '<leader>B',
+      '<leader>dB',
       function()
         require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
       end,
@@ -79,22 +81,6 @@ return {
   config = function()
     local dap = require 'dap'
     local dapui = require 'dapui'
-
-    dap.adapters.godot = {
-      type = 'server',
-      host = '127.0.0.1',
-      port = 6006,
-    }
-
-    dap.configurations.gdscript = {
-      {
-        type = 'godot',
-        request = 'launch',
-        name = 'Launch scene',
-        project = '${workspaceFolder}',
-        launch_scene = true,
-      },
-    }
 
     require('mason-nvim-dap').setup {
       -- Makes a best effort to setup the various debuggers with
@@ -160,20 +146,34 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
-    dap.configurations.typescript = {
-      {
-        type = 'node',
-        request = 'launch',
-        name = 'Launch current file (tsx)',
-        program = '${file}',
-        runtimeExecutable = 'tsx',
-        console = 'integratedTerminal',
-        cwd = '${workspaceFolder}',
-        skipFiles = {
-          '<node_internals>/**',
-          '${workspaceFolder}/node_modules/**',
-        },
-      },
+
+    require('dap-vscode-js').setup {
+      -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
+      -- debugger_path = "(runtimedir)/site/pack/packer/opt/vscode-js-debug", -- Path to vscode-js-debug installation.
+      -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+      adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
+      -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
+      -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
+      -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
     }
+
+    for _, language in ipairs { 'typescript', 'javascript' } do
+      require('dap').configurations[language] = {
+        {
+          type = 'pwa-node',
+          request = 'launch',
+          name = 'Launch file',
+          program = '${file}',
+          cwd = '${workspaceFolder}',
+        },
+        {
+          type = 'pwa-node',
+          request = 'attach',
+          name = 'Attach',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+        },
+      }
+    end
   end,
 }

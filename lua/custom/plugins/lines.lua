@@ -6,6 +6,7 @@ return {
     config = function()
       require('lualine').setup {
         options = {
+          globalstatus = true,
           component_separators = { left = '', right = '' },
           section_separators = { left = '', right = '' },
         },
@@ -27,6 +28,11 @@ return {
 
       vim.api.nvim_set_keymap('n', '<S-l>', '<cmd>BufferLineCycleNext<cr>', { silent = true })
       vim.api.nvim_set_keymap('n', '<S-h>', '<cmd>BufferLineCyclePrev<cr>', { silent = true })
+
+      vim.api.nvim_set_keymap('n', '<leader>bh', '<cmd>BufferLineCloseLeft<cr>', { silent = true, desc = '[B]uffer Close [H] Left' })
+      vim.api.nvim_set_keymap('n', '<leader>bl', '<cmd>BufferLineCloseRight<cr>', { silent = true, desc = '[B]uffer Close [L] Right' })
+      vim.api.nvim_set_keymap('n', '<leader>bo', '<cmd>BufferLineCloseOthers<cr>', { silent = true, desc = '[B]uffer Close [O]thers' })
+
       vim.api.nvim_set_keymap('n', '<leader>c', '<CMD>lua buf_kill()<CR>', { desc = '[C]loses Buffer' })
     end,
   },

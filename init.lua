@@ -1,6 +1,12 @@
 require 'utils.check-file'
 require 'utils.tmux-rename-tab'
 
+if vim.g.vscode then
+  -- VSCode Neovim extension does not support lazy.nvim yet.
+  require 'code.init'
+  return
+end
+
 --[[
   ___________________⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   |*SIRIUS*:⠀⠀⠀⠀⠀⠀⠀⠀⠀|⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -218,6 +224,8 @@ require('lazy').setup({
       spec = {
         { '<leader>g', group = '[G]it' },
         { '<leader>a', group = '[A]I' },
+        { '<leader>b', group = '[B]uffer' },
+        { '<leader>d', group = '[D]ebug' },
         { '<leader>l', group = '[L]SP' },
         { '<leader>f', group = '[F]ind' },
         { '<leader>s', group = '[S]earch' },
