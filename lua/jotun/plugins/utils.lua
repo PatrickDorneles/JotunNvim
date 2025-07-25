@@ -84,4 +84,24 @@ return {
       vim.api.nvim_set_keymap('n', 'f', ':HopWord<cr>', { silent = true })
     end,
   },
+
+  {
+    '4DRIAN0RTIZ/complexity.nvim',
+    setup = 'pip install lizard',
+    config = function()
+      require('complexity').setup {
+        thresholds = {
+          low = 10, -- CCN <= low is considered low complexity
+          medium = 15, -- CCN > low and <= medium is medium complexity
+          -- CCN > medium is high complexity
+        },
+
+        virt_prefix = '⮕ Complexity:', -- text prefix for virtual text
+        virt_pos = 'eol', -- extmark position ("eol" or "overlay")
+
+        autosave = false, -- set true to annotate on BufWritePost
+        autosave_patterns = { '*.php' }, -- file patterns to trigger autosave
+      }
+    end,
+  },
 }

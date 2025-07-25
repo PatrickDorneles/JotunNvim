@@ -24,18 +24,9 @@ vim.g.maplocalleader = '\\'
 -- Setup lazy.nvim
 require('lazy').setup {
   spec = {
+
+    { import = 'code.plugins' },
     -- add your plugins here
-    {
-      'smoka7/hop.nvim',
-      version = '*',
-      opts = {
-        keys = 'etovxqpdygfblzhckisuran',
-      },
-      config = function()
-        require('hop').setup {}
-        vim.api.nvim_set_keymap('n', 'f', ':HopWord<cr>', { silent = true })
-      end,
-    },
   },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.

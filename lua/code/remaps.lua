@@ -29,5 +29,8 @@ if vim.g.vscode then
   vim.keymap.set('n', '<leader>lr', "<Cmd>call VSCodeNotify('editor.action.rename')<CR>")
   vim.keymap.set('n', 'za', "<Cmd>call VSCodeNotify('editor.toggleFold')<CR>")
   vim.keymap.set('n', 'gr', "<Cmd>call VSCodeNotify('editor.action.goToReferences')<CR>")
+
+  -- Git
+  vim.keymap.set('n', 'gr', "<Cmd>call VSCodeNotify('editor.action.goToReferences')<CR>")
 else
 end
