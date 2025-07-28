@@ -1,35 +1,16 @@
 -- debug.lua
---
--- Shows how to use the DAP plugin to debug your code.
---
--- Primarily focused on configuring the debugger for Go, but can
--- be extended to other languages as well. That's why it's called
--- kickstart.nvim and not kitchen-sink.nvim ;)
 
 return {
-
-  -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
-  -- NOTE: And you can specify dependencies as well
   dependencies = {
-    -- Creates a beautiful debugger UI
     'rcarriga/nvim-dap-ui',
-
-    -- Required dependency for nvim-dap-ui
     'nvim-neotest/nvim-nio',
-    -- Installs the debug adapters for you
     'mason-org/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
-
-    -- Add your own debuggers here
     'leoluz/nvim-dap-go',
-    {
-      'mxsdev/nvim-dap-vscode-js',
-      setup = 'npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out',
-    },
+    'mxsdev/nvim-dap-vscode-js',
   },
   keys = {
-    -- Basic debugging keymaps, feel free to change to your liking!
     {
       '<F5>',
       function()
@@ -73,51 +54,29 @@ return {
       desc = 'Debug: Set Breakpoint',
     },
     {
-      '<leader>do',
-      function()
-        require('dapui').toggle()
-      end,
-      desc = 'Debug: See last session result.',
-    },
-    -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
-    {
       '<F7>',
       function()
-        require('dapui').toggle()
+        local dap = require 'dap'
+        local dapui = require 'dapui'
+        if dap.session() then
+          dapui.toggle()
+        else
+          vim.notify('No active debug session', vim.log.levels.WARN)
+        end
       end,
-      desc = 'Debug: See last session result.',
+      desc = 'Debug: Toggle UI',
     },
   },
   config = function()
     local dap = require 'dap'
     local dapui = require 'dapui'
 
-    require('mason-nvim-dap').setup {
-      -- Makes a best effort to setup the various debuggers with
-      -- reasonable debug configurations
-      automatic_installation = true,
-
-      -- You can provide additional configuration to the handlers,
-      -- see mason-nvim-dap README for more information
-      handlers = {},
-
-      -- You'll need to check that you have the required things installed
-      -- online, please don't ask me how to install them :)
-      ensure_installed = {
-        -- Update this to ensure that you have the debuggers for the langs you want
-        'delve',
-        'js-debug-adapter',
-      },
-    }
-
-    -- Dap UI setup
-    -- For more information, see |:help nvim-dap-ui|
+    -- Setup DAP UI
     dapui.setup {
-      -- Set icons to characters that are more likely to work in every terminal.
-      --    Feel free to remove or use ones that you like more! :)
-      --    Don't feel like these are good choices.
       icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
       controls = {
+        enabled = true,
+        element = 'repl',
         icons = {
           pause = '⏸',
           play = '▶',
@@ -132,37 +91,72 @@ return {
       },
     }
 
-    -- Change breakpoint icons
-    -- vim.api.nvim_set_hl(0, 'DapBreak', { fg = '#e51400' })
-    -- vim.api.nvim_set_hl(0, 'DapStop', { fg = '#ffcc00' })
-    -- local breakpoint_icons = vim.g.have_nerd_font
-    --     and { Breakpoint = '', BreakpointCondition = '', BreakpointRejected = '', LogPoint = '', Stopped = '' }
-    --   or { Breakpoint = '●', BreakpointCondition = '⊜', BreakpointRejected = '⊘', LogPoint = '◆', Stopped = '⭔' }
-    -- for type, icon in pairs(breakpoint_icons) do
-    --   local tp = 'Dap' .. type
-    --   local hl = (type == 'Stopped') and 'DapStop' or 'DapBreak'
-    --   vim.fn.sign_define(tp, { text = icon, texthl = hl, numhl = hl })
-    -- end
-
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
-    -- Install golang specific config
+    -- Setup mason-dap
+    require('mason-nvim-dap').setup {
+      automatic_installation = true,
+      ensure_installed = { 'delve', 'js-debug-adapter' },
+    }
+
+    -- DAP for Go
     require('dap-go').setup {
       delve = {
-        -- On Windows delve must be run attached or it crashes.
-        -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
         detached = vim.fn.has 'win32' == 0,
       },
     }
 
-    require('dap-vscode-js').setup {
-      -- Optional: Specify the path to your Node.js executable if not in PATH
-      -- node_path = 'node',
-      -- -- Optional: Path to the vscode-js-debug installation if not managed by Mason
-      debugger_cmd = { 'js-debug-adapter' }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
-      adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal' },
-    }
+    -- JS Debug adapter setup for launch mode
+    local js_debug_path = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter'
+    local adapter_path = js_debug_path .. '/js-debug/src/dapDebugServer.js'
+
+    dap.adapters['node'] = function(callback, _)
+      local js_debug_path = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter'
+      local adapter_path = js_debug_path .. '/js-debug/src/dapDebugServer.js'
+      local port = 8123
+
+      local handle
+      local pid_or_err
+      local opts = {
+        stdio = { nil, nil, nil },
+        args = { adapter_path, '--server=127.0.0.1:' .. port },
+        detached = true,
+      }
+
+      handle, pid_or_err = vim.loop.spawn('node', opts, function(code)
+        handle:close()
+        if code ~= 0 then
+          vim.notify('js-debug-adapter exited with code ' .. code, vim.log.levels.ERROR)
+        end
+      end)
+
+      -- Wait for adapter to open the port before calling callback
+      local function connect_when_ready()
+        local socket = require 'socket'
+        local client = socket.tcp()
+        client:settimeout(0.1)
+        local ok = client:connect('127.0.0.1', port)
+        if ok then
+          client:close()
+          callback {
+            type = 'server',
+            host = '127.0.0.1',
+            port = port,
+          }
+        else
+          vim.defer_fn(connect_when_ready, 100)
+        end
+      end
+
+      connect_when_ready()
+    end
+
+    -- Load .vscode/launch.json
+    require('dap.ext.vscode').load_launchjs(nil, {
+      node = { 'javascript', 'typescript' },
+      ['node-launch'] = { 'javascript', 'typescript' },
+    })
   end,
 }
