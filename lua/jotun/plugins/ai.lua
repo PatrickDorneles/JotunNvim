@@ -22,6 +22,7 @@ return {
       -- for example
       provider = 'claude',
       auto_suggestions_provider = false,
+
       providers = {
         claude = {
           endpoint = 'https://api.anthropic.com',
@@ -29,7 +30,7 @@ return {
           timeout = 30000, -- Timeout in milliseconds
           extra_request_body = {
             temperature = 0.75,
-            max_tokens = 4800,
+            max_tokens = 20480,
           },
         },
         moonshot = {

@@ -13,12 +13,11 @@ globals = {
   -- "TelescopeGlobalState",
   -- "_TelescopeConfigurationValues",
   -- "_TelescopeConfigurationPickers",
+  'vim',
 }
 
 -- Global objects defined by the C code
-read_globals = {
-  'vim',
-}
+read_globals = {}
 
 files = {
   -- ["lua/telescope/builtin/init.lua"] = {

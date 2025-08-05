@@ -1,12 +1,3 @@
-if vim.g.vscode then
-  -- VSCode Neovim extension does not support lazy.nvim yet.
-  require 'code.init'
-  return
-end
-
-require 'utils.check-file'
-require 'utils.tmux-rename-tab'
-
 --[[
   ___________________⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   |*SIRIUS*:⠀⠀⠀⠀⠀⠀⠀⠀⠀|⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -45,9 +36,16 @@ require 'utils.tmux-rename-tab'
 This is the main config file. I've deleted some of the tutorial comments.
 
 I presume you know how to use Neovim, so I won't explain everything.
-
-
 --]]
+
+if vim.g.vscode then
+  -- If you are using VSCode Neovim, ignore the rest of this file.
+  require 'code.init'
+  return
+end
+
+require 'utils.check-file'
+require 'utils.tmux-rename-tab'
 
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -61,6 +59,7 @@ vim.o.mouse = 'a'
 vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)
+
 vim.o.breakindent = true
 vim.o.undofile = true
 vim.o.ignorecase = true
@@ -83,58 +82,9 @@ vim.o.scrolloff = 10
 -- instead raise a dialog asking if you wish to save the current file(s)
 vim.o.confirm = true
 
--- [[ !! Basic Keymaps !! ]]
-vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite Buffer' })
-vim.keymap.set('n', '<leader>q', '<cmd>q<CR>', { desc = '[Q]uit Pane/Nvim' })
-vim.keymap.set('n', '<leader>e', '<cmd>Oil<CR>', { desc = 'Open [E]xplorer' })
-
-vim.keymap.set('n', '<a-j>', ':m .+1<CR>==', { desc = 'Move Line Down' })
-vim.keymap.set('n', '<a-k>', ':m .-2<CR>==', { desc = 'Move Line Up' })
-
-vim.keymap.set('x', '<a-j>', ":m '>+1<CR>gv-gv", { desc = 'Move Line Down' })
-vim.keymap.set('x', '<a-k>', ":m '<-2<CR>gv-gv", { desc = 'Move Line Up' })
-
--- Clear highlights on search when pressing <Esc> in normal mode
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-
--- Splits into horizontal and vertical splits
--- Use `|` to split vertically
--- Use `\` to split horizontally
-vim.keymap.set('n', '|', ':vsplit<CR>')
-vim.keymap.set('n', '\\', ':split<CR>')
-
--- Diagnostic keymaps
--- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
--- vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
---
--- ME: I use tmux btw, so I don't need this.
-
--- TIP: Disable arrow keys in normal mode
-
-vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+require 'jotun.keymaps'
 
 -- Keybinds to make split navigation easier.
-
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 -- [[ Basic Autocommands ]]
 
