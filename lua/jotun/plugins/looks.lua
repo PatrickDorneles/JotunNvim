@@ -1,7 +1,7 @@
 -- Looks is a collection of plugins that enhance the visual appearance of Neovim.
 return {
   {
-    'lewis6991/hover.nvim',
+    'PatrickDorneles/hover.nvim',
     config = function()
       require('hover').setup {
         init = function()
@@ -12,7 +12,7 @@ return {
           -- require 'hover.providers.jira'
           -- require 'hover.providers.dap'
           -- require 'hover.providers.fold_preview'
-          -- require 'hover.providers.diagnostic'
+          require 'hover.providers.diagnostic'
           -- require 'hover.providers.man'
           -- require 'hover.providers.dictionary'
           -- require 'hover.providers.highlight'
@@ -28,6 +28,9 @@ return {
           'LSP',
         },
         mouse_delay = 1000,
+        provider_priorities = {
+          LSP = 99999,
+        },
       }
 
       -- Setup keymaps
