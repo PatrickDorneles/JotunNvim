@@ -154,7 +154,10 @@ return {
     'chrisgrieser/nvim-origami',
     event = 'VeryLazy',
     opts = {
-      useLspFoldsWithTreesitterFallback = true, -- required for `autoFold`
+      useLspFoldsWithTreesitterFallback = {
+        enabled = true,
+        foldmethodIfNeitherIsAvailable = 'indent', ---@type string|fun(bufnr: number): string
+      },
       pauseFoldsOnSearch = true,
       foldtext = {
         enabled = true,

@@ -21,8 +21,11 @@ return {
     config = function()
       require('bufferline').setup {
         options = {
+          indicator = {
+            style = 'underline',
+          },
           always_show_bufferline = true,
-          separator_style = 'slope',
+          separator_style = { '', '' },
         },
       }
 
@@ -34,6 +37,8 @@ return {
       vim.api.nvim_set_keymap('n', '<leader>bo', '<cmd>BufferLineCloseOthers<cr>', { silent = true, desc = '[B]uffer Close [O]thers' })
 
       vim.api.nvim_set_keymap('n', '<leader>c', '<CMD>lua buf_kill()<CR>', { desc = '[C]loses Buffer' })
+
+      local bg_color = '#1C1C23'
     end,
   },
   {

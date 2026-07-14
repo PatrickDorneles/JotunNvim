@@ -21,13 +21,8 @@ return {
     end,
   },
   {
-    'NvChad/nvim-colorizer.lua',
-    config = function()
-      require('colorizer').setup {
-        user_default_options = { names = true, css = true, tailwind = true },
-        filetypes = { 'tsx', 'html', 'jsx', 'astro', 'vue', 'hbs' },
-      }
-    end,
+    'uga-rosa/ccc.nvim',
+    opts = {},
   },
   {
     'christoomey/vim-tmux-navigator',
