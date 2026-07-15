@@ -18,8 +18,9 @@ return {
       provider = 'gemini',
       providers = {
         gemini = {
-           model = 'gemma-4-31b-it',
+          model = 'gemini-3.1-flash-lite',
           api_key_name = 'AVANTE_GEMINI_API_KEY',
+          context_window = 32000,
         },
       },
     },
