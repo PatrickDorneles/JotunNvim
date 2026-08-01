@@ -1,25 +1,5 @@
 return {
-  {
-    'numToStr/Comment.nvim',
-    opts = {},
-    config = function()
-      require('Comment').setup()
-
-      local api = require 'Comment.api'
-
-      -- Toggle selection (linewise)
-      vim.keymap.set('x', '<leader>\\', function()
-        vim.api.nvim_feedkeys(esc, 'nx', false)
-        api.toggle.linewise(vim.fn.visualmode())
-      end)
-
-      -- Toggle selection (blockwise)
-      vim.keymap.set('x', '<leader>|', function()
-        vim.api.nvim_feedkeys(esc, 'nx', false)
-        api.toggle.blockwise(vim.fn.visualmode())
-      end)
-    end,
-  },
+  { 'nvim-mini/mini.comment', version = '*' },
   {
     'uga-rosa/ccc.nvim',
     opts = {},
