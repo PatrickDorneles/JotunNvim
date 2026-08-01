@@ -71,9 +71,46 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
-    -- Setup DAP UI
+    -- VSCode-like layout: variables/watch/stack/breakpoints on the left,
+    -- console + REPL at the bottom.
     dapui.setup {
+      wrap = false,
       icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
+      mappings = {
+        expand = { '<CR>', '<2-LeftMouse>' },
+        open = 'o',
+        remove = 'd',
+        edit = 'e',
+        repl = 'r',
+        toggle = 't',
+        watch = 'w',
+      },
+      element_mappings = {},
+      expand_lines = true,
+      force_buffers = true,
+      layouts = {
+        {
+          elements = {
+            { id = 'scopes', size = 0.25 },
+            { id = 'breakpoints', size = 0.25 },
+            { id = 'stacks', size = 0.25 },
+            { id = 'watches', size = 0.25 },
+          },
+          size = 40,
+          position = 'left',
+        },
+        {
+          elements = { 'repl', 'console' },
+          size = 10,
+          position = 'bottom',
+        },
+      },
+      floating = {
+        max_height = nil,
+        max_width = nil,
+        border = 'rounded',
+        mappings = { close = { 'q', '<Esc>' } },
+      },
       controls = {
         enabled = true,
         element = 'repl',
@@ -89,16 +126,22 @@ return {
           disconnect = '⏏',
         },
       },
+      render = {
+        indent = 1,
+        max_value_lines = 100,
+      },
     }
 
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
-    -- Setup mason-dap
+    -- Setup mason-dap. Note: js-debug must be referenced by its adapter name
+    -- `js` (mapped to the `js-debug-adapter` package); the package name itself
+    -- is not resolvable here and would be silently skipped.
     require('mason-nvim-dap').setup {
       automatic_installation = true,
-      ensure_installed = { 'delve', 'js-debug-adapter' },
+      ensure_installed = { 'delve', 'js' },
     }
 
     -- DAP for Go
@@ -108,55 +151,47 @@ return {
       },
     }
 
-    -- JS Debug adapter setup for launch mode
-    local js_debug_path = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter'
-    local adapter_path = js_debug_path .. '/js-debug/src/dapDebugServer.js'
+    -- JS/TS debugging via vscode-js-debug (installed by mason and exposed on
+    -- PATH as `js-debug-adapter`). This replaces the previous manual adapter
+    -- spawn which needed luarocks' `socket` and a hand-rolled port poll.
+    require('dap-vscode-js').setup {
+      debugger_cmd = { 'js-debug-adapter' },
+      adapters = { 'pwa-node' },
+    }
 
-    dap.adapters['node'] = function(callback, _)
-      local js_debug_path = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter'
-      local adapter_path = js_debug_path .. '/js-debug/src/dapDebugServer.js'
-      local port = 8123
+    -- VSCode aliases the legacy `node` type to the js debugger
+    dap.adapters['node'] = dap.adapters['pwa-node']
 
-      local handle
-      local pid_or_err
-      local opts = {
-        stdio = { nil, nil, nil },
-        args = { adapter_path, '--server=127.0.0.1:' .. port },
-        detached = true,
+    for _, language in ipairs { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' } do
+      dap.configurations[language] = {
+        {
+          type = 'pwa-node',
+          request = 'launch',
+          name = 'Launch file',
+          program = '${file}',
+          cwd = '${workspaceFolder}',
+        },
+        {
+          type = 'pwa-node',
+          request = 'launch',
+          name = 'Launch via npm',
+          runtimeExecutable = 'npm',
+          runtimeArgs = { 'run-script', 'debug' },
+          cwd = '${workspaceFolder}',
+          console = 'integratedTerminal',
+          internalConsoleOptions = 'neverOpen',
+        },
+        {
+          type = 'pwa-node',
+          request = 'attach',
+          name = 'Attach to process',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+        },
       }
-
-      handle, pid_or_err = vim.loop.spawn('node', opts, function(code)
-        handle:close()
-        if code ~= 0 then
-          vim.notify('js-debug-adapter exited with code ' .. code, vim.log.levels.ERROR)
-        end
-      end)
-
-      -- Wait for adapter to open the port before calling callback
-      local function connect_when_ready()
-        local socket = require 'socket'
-        local client = socket.tcp()
-        client:settimeout(0.1)
-        local ok = client:connect('127.0.0.1', port)
-        if ok then
-          client:close()
-          callback {
-            type = 'server',
-            host = '127.0.0.1',
-            port = port,
-          }
-        else
-          vim.defer_fn(connect_when_ready, 100)
-        end
-      end
-
-      connect_when_ready()
     end
 
-    -- Load .vscode/launch.json
-    require('dap.ext.vscode').load_launchjs(nil, {
-      node = { 'javascript', 'typescript' },
-      ['node-launch'] = { 'javascript', 'typescript' },
-    })
+    -- `.vscode/launch.json` is now read automatically by nvim-dap providers
+    -- (`:h dap-providers`), so `dap.ext.vscode.load_launchjs` is no longer needed.
   end,
 }
