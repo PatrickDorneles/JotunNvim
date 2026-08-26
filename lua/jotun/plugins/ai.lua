@@ -4,7 +4,14 @@ return {
   {
     'sudo-tee/opencode.nvim',
     config = function()
-      require('opencode').setup { keymap_prefix = '<leader>a' }
+      require('opencode').setup {
+        keymap_prefix = '<leader>a',
+        keymap = {
+          editor = {
+            ['<leader>aq'] = { 'quick_chat', mode = { 'n', 'x' }, desc = 'Quick chat with current context' },
+          },
+        },
+      }
     end,
     dependencies = {
       {
