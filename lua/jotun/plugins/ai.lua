@@ -5,20 +5,6 @@ return {
     'sudo-tee/opencode.nvim',
     config = function()
       require('opencode').setup { keymap_prefix = '<leader>a' }
-
-      -- Re-register keymaps with bracketed descriptions ([T]oggle, [I]nput, etc.)
-      local config = require 'opencode.config'
-      local keymap = require 'opencode.keymap'
-      for _, mappings in pairs(config.values.keymap) do
-        for _, entry in pairs(mappings) do
-          if type(entry) == 'table' and entry.desc then
-            entry.desc = entry.desc:gsub('(%w+)', function(word)
-              return '[' .. word:sub(1, 1) .. ']' .. word:sub(2)
-            end)
-          end
-        end
-      end
-      keymap.setup(config.values.keymap.editor)
     end,
     dependencies = {
       {

@@ -173,7 +173,7 @@ require('lazy').setup({
       -- [[ !! WHICH-KEY GROUPS !! ]]
       spec = {
         { '<leader>g', group = '[G]it' },
-        { '<leader>a', group = 'OpenCode' },
+        { '<leader>a', group = '[A]I (OpenCode)' },
         { '<leader>b', group = '[B]uffer' },
         { '<leader>d', group = '[D]ebug' },
         { '<leader>l', group = '[L]SP' },
