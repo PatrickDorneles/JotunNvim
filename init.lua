@@ -182,6 +182,7 @@ require('lazy').setup({
         { '<leader>t', group = '[T]est' },
         { '<leader>v', group = 'LÖ[V]E' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>ar', group = '[R]evert' },
       },
     },
   },

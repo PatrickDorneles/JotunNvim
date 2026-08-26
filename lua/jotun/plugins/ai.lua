@@ -8,7 +8,24 @@ return {
         keymap_prefix = '<leader>a',
         keymap = {
           editor = {
+            -- Remap toggle to <leader>aa
+            ['<leader>aa'] = { 'toggle', desc = 'Toggle Opencode window' },
+            ['<leader>ag'] = false,
+            -- Quick chat on <leader>aq
             ['<leader>aq'] = { 'quick_chat', mode = { 'n', 'x' }, desc = 'Quick chat with current context' },
+            -- Disable noisy keymaps (toggle + <leader>q already handle open/close)
+            ['<leader>a/'] = false,
+            ['<leader>ai'] = false,
+            ['<leader>aI'] = false,
+            ['<leader>ao'] = false,
+            ['<leader>at'] = false,
+            ['<leader>aT'] = false,
+            ['<leader>az'] = false,
+            ['<leader>av'] = false,
+            ['<leader>ax'] = false,
+            ['<leader>att'] = false,
+            ['<leader>atr'] = false,
+            ['<leader>atm'] = false,
           },
         },
       }
