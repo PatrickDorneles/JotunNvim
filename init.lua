@@ -174,6 +174,7 @@ require('lazy').setup({
       spec = {
         { '<leader>g', group = '[G]it' },
         { '<leader>a', group = '[A]I' },
+        { '<leader>o', group = '[O]pencode' },
         { '<leader>b', group = '[B]uffer' },
         { '<leader>d', group = '[D]ebug' },
         { '<leader>l', group = '[L]SP' },
