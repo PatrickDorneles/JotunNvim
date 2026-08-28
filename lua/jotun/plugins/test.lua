@@ -22,6 +22,14 @@ return {
         cwd = function(path)
           return vim.fn.getcwd()
         end,
+        -- Also recognize `*.integration-spec.ts` as a test file
+        isTestFile = function(file_path)
+          local is_test = require('neotest-jest.util').defaultTestFileMatcher(file_path)
+          if is_test then
+            return true
+          end
+          return file_path:match('%.integration%-spec%.[jt]sx?$') ~= nil
+        end,
       }
 
       local vitest_adapter = require 'neotest-vitest'
