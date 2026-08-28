@@ -22,13 +22,13 @@ return {
         cwd = function(path)
           return vim.fn.getcwd()
         end,
-        -- Also recognize `*.integration-spec.ts` as a test file
+        -- Also recognize `*-spec.ts` variants (e.g. `integration-spec`, `e2e-spec`)
         isTestFile = function(file_path)
           local is_test = require('neotest-jest.util').defaultTestFileMatcher(file_path)
           if is_test then
             return true
           end
-          return file_path:match('%.integration%-spec%.[jt]sx?$') ~= nil
+          return file_path:match('%-spec%.[jt]sx?$') ~= nil
         end,
       }
 
