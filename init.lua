@@ -408,10 +408,22 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        typescript = { 'prettier' },
-        typescriptreact = { 'prettier' },
-        javascript = { 'prettier' },
-        javascriptreact = { 'prettier' },
+        -- Respect the project's tool (biome if a biome config exists, else
+        -- prettier whenever a prettier config exists), and always fall back to
+        -- plain prettier so TS/JS always format on save instead of leaking to
+        -- the LSP fallback (which would pick cssls and mangle JSX/TSX).
+        typescript = check_any_configfile_exists { '.prettierrc' } and { 'prettier' }
+          or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
+          or { 'prettier' },
+        typescriptreact = check_any_configfile_exists { '.prettierrc' } and { 'prettier' }
+          or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
+          or { 'prettier' },
+        javascript = check_any_configfile_exists { '.prettierrc' } and { 'prettier' }
+          or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
+          or { 'prettier' },
+        javascriptreact = check_any_configfile_exists { '.prettierrc' } and { 'prettier' }
+          or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
+          or { 'prettier' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
