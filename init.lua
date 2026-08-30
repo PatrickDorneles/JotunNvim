@@ -397,29 +397,8 @@ require('lazy').setup({
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
-
-        -- TS/JS buffers only get a formatter (prettier/biome) when a project
-        -- config exists. Without one, `formatters_by_ft` resolves to `{}`, so
-        -- the LSP fallback would pick cssls (attached by the styled-components
-        -- plugin) to format the whole buffer — which mangles JSX/TSX. Skip the
-        -- fallback for JS/TS unless an explicit formatter is configured.
-        local js_filetypes = {
-          typescript = true,
-          typescriptreact = true,
-          javascript = true,
-          javascriptreact = true,
-        }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
-        elseif js_filetypes[vim.bo[bufnr].filetype] then
-          local formatters = require('conform').formatters_by_ft[vim.bo[bufnr].filetype]
-          if not formatters or vim.tbl_isempty(formatters) then
-            return nil
-          end
-          return {
-            timeout_ms = 500,
-            lsp_format = 'fallback',
-          }
         else
           return {
             timeout_ms = 500,
@@ -429,10 +408,10 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        typescript = check_any_configfile_exists { '.prettierrc' } and { 'prettierd' } or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' } or {},
-        typescriptreact = check_any_configfile_exists { '.prettierrc' } and { 'prettierd' }
-          or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
-          or {},
+        typescript = { 'prettier' },
+        typescriptreact = { 'prettier' },
+        javascript = { 'prettier' },
+        javascriptreact = { 'prettier' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
