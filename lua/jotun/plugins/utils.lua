@@ -2,7 +2,26 @@ return {
   { 'nvim-mini/mini.comment', version = '*' },
   {
     'uga-rosa/ccc.nvim',
-    opts = {},
+    opts = {
+      highlighter = {
+        -- Show color highlights (hex/rgb/hsl) automatically. Scoped to code
+        -- and CSS/CSS-in-JS filetypes so random hex strings in prose are
+        -- not highlighted (styled-components colors live in tsx/ts/css).
+        auto_enable = true,
+        filetypes = {
+          'css',
+          'scss',
+          'less',
+          'html',
+          'javascript',
+          'javascriptreact',
+          'typescript',
+          'typescriptreact',
+          'vue',
+          'svelte',
+        },
+      },
+    },
   },
   {
     'christoomey/vim-tmux-navigator',

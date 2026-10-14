@@ -311,12 +311,13 @@ require('lazy').setup({
         },
       }
 
-      local capabilities = require('blink.cmp').get_lsp_capabilities()
-
       local servers = {
-        ts_ls = {},
+        -- TypeScript/JavaScript is handled by typescript-tools.nvim (see
+        -- lua/jotun/plugins/langs.lua), which loads @styled/typescript-styled-plugin
+        -- for CSS-in-JS IntelliSense inside template literals. That avoids
+        -- attaching cssls to .tsx buffers, which would let conform's LSP
+        -- fallback mangle JSX on save.
         cssls = {},
-        prettier = {},
         clangd = {},
         rust_analyzer = {},
         pyright = {},
@@ -353,6 +354,14 @@ require('lazy').setup({
         servers['biome'] = {}
       end
 
+      -- Register per-server configs via vim.lsp.config (Neovim 0.11+).
+      -- blink.cmp's plugin/blink-cmp.lua already sets
+      -- vim.lsp.config('*', { capabilities = ... }) globally, so capabilities
+      -- are applied to every server here without re-setting them manually.
+      for name, config in pairs(servers) do
+        vim.lsp.config(name, config)
+      end
+
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
@@ -361,16 +370,12 @@ require('lazy').setup({
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
+        -- TypeScript/JavaScript is handled by typescript-tools.nvim (see
+        -- lua/jotun/plugins/langs.lua). Exclude ts_ls from automatic_enable so
+        -- it never attaches alongside typescript-tools; having both clients
+        -- active would double-fire LSP actions like rename (<leader>lr).
+        automatic_enable = {
+          exclude = { 'ts_ls' },
         },
       }
     end,
@@ -408,22 +413,10 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Respect the project's tool (biome if a biome config exists, else
-        -- prettier whenever a prettier config exists), and always fall back to
-        -- plain prettier so TS/JS always format on save instead of leaking to
-        -- the LSP fallback (which would pick cssls and mangle JSX/TSX).
-        typescript = check_any_configfile_exists { '.prettierrc' } and { 'prettier' }
+        typescript = check_any_configfile_exists { '.prettierrc' } and { 'prettierd' } or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' } or {},
+        typescriptreact = check_any_configfile_exists { '.prettierrc' } and { 'prettierd' }
           or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
-          or { 'prettier' },
-        typescriptreact = check_any_configfile_exists { '.prettierrc' } and { 'prettier' }
-          or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
-          or { 'prettier' },
-        javascript = check_any_configfile_exists { '.prettierrc' } and { 'prettier' }
-          or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
-          or { 'prettier' },
-        javascriptreact = check_any_configfile_exists { '.prettierrc' } and { 'prettier' }
-          or check_any_configfile_exists { 'biome.jsonc' } and { 'biome' }
-          or { 'prettier' },
+          or {},
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -468,45 +461,55 @@ require('lazy').setup({
     },
     --- @module 'blink.cmp'
     --- @type blink.cmp.Config
-    opts = function(_, opts)
-      -- CSS-in-JS (styled-components / emotion): filter cssls completions to
-      -- only show inside injected template-literal CSS regions, plus a source
-      -- that supplies CSS completions there.
-      local styled = require 'styled-components.blink'
-      opts.sources = opts.sources or {}
-      opts.sources.default = opts.sources.default or { 'path', 'snippets', 'lazydev', 'lsp' }
-      opts.sources.providers = opts.sources.providers or {}
-      table.insert(opts.sources.default, 'styled-components')
-      opts.sources.providers.lsp = vim.tbl_deep_extend('force', opts.sources.providers.lsp or {}, {
-        override = {
-          transform_items = styled.get_lsp_transform_items(),
-        },
-      })
-      opts.sources.providers['styled-components'] = {
-        name = 'styled-components',
-        module = 'styled-components.completion',
-        enabled = styled.enabled,
-      }
-      opts.sources.providers.lazydev = {
-        module = 'lazydev.integrations.blink',
-        score_offset = 100,
-      }
+    opts = {
+      keymap = {
 
-      -- keymap
-      opts.keymap = {
-        preset = 'enter',
+        -- 'default' (recommended) for mappings similar to built-in completions
+        --   <c-y> to accept ([y]es) the completion.
+        --    This will auto-import if your LSP supports it.
+        --    This will expand snippets if the LSP sent a snippet.
+        -- 'super-tab' for tab to accept
+        -- 'enter' for enter to accept
+        -- 'none' for no mappings
+        --
+        -- For an understanding of why the 'default' preset is recommended,
+        -- you will need to read `:help ins-completion`
+        --
+        -- No, but seriously. Please read `:help ins-completion`, it is really good!
+        --
+        -- All presets have the following mappings:
+        -- <tab>/<s-tab>: move to right/left of your snippet expansion
+        -- <c-space>: Open menu or open docs if already open
+        -- <c-n>/<c-p> or <up>/<down>: Select next/previous item
+        -- <c-e>: Hide menu
+        -- <c-k>: Toggle signature help
+        --
+        -- See :h blink-cmp-config-keymap for defining your own keymap
+        preset = 'default',
+
         ['<a-j>'] = { 'select_next' },
         ['<a-k>'] = { 'select_prev' },
-      }
 
-      opts.appearance = {
+        -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
+        --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
+      },
+
+      appearance = {
+        -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+        -- Adjusts spacing to ensure icons are aligned
+
         nerd_font_variant = 'mono',
-      }
+      },
 
-      opts.completion = {
+      completion = {
+        -- By default, you may press `<c-space>` to show the documentation.
+        -- Optionally, set `auto_show = true` to show the documentation after a delay.
+
         list = {},
         documentation = { auto_show = true, auto_show_delay_ms = 500 },
+
         menu = {
+          -- nvim-cmp style menu
           draw = {
             columns = {
               { 'kind_icon', 'label', 'label_description', gap = 1 },
@@ -515,15 +518,31 @@ require('lazy').setup({
             },
           },
         },
+
         ghost_text = { enabled = true },
-      }
+      },
 
-      opts.snippets = { preset = 'luasnip' }
-      opts.fuzzy = { implementation = 'lua' }
-      opts.signature = { enabled = true }
+      sources = {
+        default = { 'path', 'snippets', 'lazydev', 'lsp' },
+        providers = {
+          lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+        },
+      },
 
-      return opts
-    end,
+      snippets = { preset = 'luasnip' },
+
+      -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
+      -- which automatically downloads a prebuilt binary when enabled.
+      --
+      -- By default, we use the Lua implementation instead, but you may enable
+      -- the rust implementation via `'prefer_rust_with_warning'`
+      --
+      -- See :h blink-cmp-config-fuzzy for more information
+      fuzzy = { implementation = 'lua' },
+
+      -- Shows a signature help window while you type arguments for a function
+      signature = { enabled = true },
+    },
   },
 
   { -- You can easily change to a different colorscheme.
@@ -598,7 +617,7 @@ require('lazy').setup({
     build = ':TSUpdate',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'css', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'styled', 'tsx', 'typescript', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'css', 'diff', 'gdscript', 'go', 'html', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'rust', 'styled', 'tsx', 'typescript', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {

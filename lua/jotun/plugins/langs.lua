@@ -14,21 +14,21 @@ return {
     },
   },
 
-  -- CSS-in-JS (styled-components / emotion): native CSS LSP inside template literals
+  -- TypeScript/JavaScript LSP. Uses tsserver directly and loads the
+  -- @styled/typescript-styled-plugin (installed globally) for CSS-in-JS
+  -- IntelliSense inside styled-components/emotion template literals.
+  -- Replaces ts_ls; no lspconfig/mason registration needed.
   {
-    'crafts69guy/styled-components.nvim',
+    'pmizio/typescript-tools.nvim',
     dependencies = {
-      'nvim-treesitter/nvim-treesitter',
+      'nvim-lua/plenary.nvim',
       'neovim/nvim-lspconfig',
     },
     ft = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
     opts = {
-      enabled = true,
-      cssls_config = {
-        settings = {
-          css = {
-            lint = { unknownAtRules = 'ignore' },
-          },
+      settings = {
+        tsserver_plugins = {
+          '@styled/typescript-styled-plugin',
         },
       },
     },
